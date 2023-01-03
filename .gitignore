@@ -120,7 +120,6 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
@@ -155,3 +154,6 @@ cython_debug/
 
 # custom
 .idea/
+!.gitkeep
+
+media/
