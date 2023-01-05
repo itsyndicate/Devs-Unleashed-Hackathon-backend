@@ -2,8 +2,8 @@ from django.db import models
 
 
 class Project(models.Model):
-    account_id = models.CharField('accountId from Jira', max_length=43)
     name = models.CharField(max_length=200, null=True, blank=True)
+    project_id = models.IntegerField()
 
     def __str__(self):
         return self.name
@@ -11,6 +11,7 @@ class Project(models.Model):
 
 class UserProfile(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='profiles')
+    account_id = models.CharField('accountId from Jira', max_length=43)
     project = models.ForeignKey('Project', on_delete=models.CASCADE, related_name='profiles')
 
     def __str__(self):
