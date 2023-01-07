@@ -33,7 +33,6 @@ class PlayerProfile(models.Model):
 
 class FightStatus(models.TextChoices):
     WAITING_ACCEPT = 'WA', 'Waiting for accept'
-    ACCEPTED = 'A', 'Accepted'
     PENDING = 'P', 'Pending'
     COMPLETED = 'CO', 'Completed'
     CANCELED = 'CA', 'Canceled'
