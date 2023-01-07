@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 
 class Project(models.Model):
@@ -33,6 +34,7 @@ class PlayerProfile(models.Model):
 
 class FightStatus(models.TextChoices):
     WAITING_ACCEPT = 'WA', 'Waiting for accept'
+    ACCEPTED = 'AC', 'Accepted'
     PENDING = 'P', 'Pending'
     COMPLETED = 'CO', 'Completed'
     CANCELED = 'CA', 'Canceled'
@@ -40,8 +42,7 @@ class FightStatus(models.TextChoices):
 
 class FightChallenge(models.Model):
     initiator = models.ForeignKey('PlayerProfile', on_delete=models.CASCADE, related_name='initiated_fights')
-    opponent = models.ForeignKey('PlayerProfile', on_delete=models.CASCADE, related_name='received_fights',
-                                 null=True, blank=True)
+    opponent = models.ForeignKey('PlayerProfile', on_delete=models.CASCADE, related_name='received_fights')
     status = models.CharField(max_length=2, choices=FightStatus.choices, default=FightStatus.WAITING_ACCEPT)
     winner = models.ForeignKey('PlayerProfile', on_delete=models.CASCADE, related_name='won_fights', null=True,
                                blank=True)
@@ -54,6 +55,18 @@ class FightChallenge(models.Model):
 
     def __str__(self):
         return f"Fight between {self.initiator} and {self.opponent}"
+
+    class Meta:
+        verbose_name = 'Fight'
+        verbose_name_plural = 'Fights'
+        constraints = [
+            models.CheckConstraint(check=(Q(draw=True) ^ Q(winner__isnull=False) & Q(status=FightStatus.COMPLETED)) |
+                                         (Q(draw=False) & Q(winner__isnull=True) & ~Q(status=FightStatus.COMPLETED)),
+                                   name='draw_and_winner__isnull_not_equal',
+                                   violation_error_message='Draw and winner must be not set until fight is not'
+                                                           ' completed. '
+                                                           'When completed, draw and winner must not be equal'),
+        ]
 
 
 class Taskogotchi(models.Model):
