@@ -1,0 +1,466 @@
+openapi: 3.0.3
+info:
+  title: Taskogotchi backend API
+  version: 0.0.1
+  description: Jira Taskogotchi project. No authentication required.
+paths:
+  /api/v1/available-opponents:
+    get:
+      operationId: available_opponents_list
+      description: List of all opponents for a given project
+      parameters:
+      - in: query
+        name: account_id
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: project_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - available-opponents
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Opponent'
+          description: ''
+  /api/v1/fight:
+    get:
+      operationId: fight_retrieve
+      description: Retrieve current fight challenge
+      parameters:
+      - in: query
+        name: account_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - fight
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FightChallenge'
+          description: ''
+    post:
+      operationId: fight_create
+      description: |-
+        Create a new fight challenge
+
+        **Be careful! You can't create new fight if you're already in another fight! In case you try, you'll get an 409 error.**
+      tags:
+      - fight
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFightChallenge'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateFightChallenge'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateFightChallenge'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FightChallenge'
+          description: ''
+    put:
+      operationId: fight_update
+      description: |-
+        Update fight challenge
+
+        Available actions: *accept*, *start*, *complete*, *cancel*.
+
+        If fight doesn't exist, you'll get 404 error. (if not, please notify @let45fc)
+
+        Don't forget to send **account_id** in request data! It is necessary to identify the fight you are in.
+
+        **Important**: when completing a fight, you need to send **"winner_account_id"** if there's a winner in fight. If there's no winner, you need to send **"winner_account_id": null** or not to send this field at all. If winner_account_id is not provided, the fight will be considered a draw.
+      tags:
+      - fight
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFightChallenge'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateFightChallenge'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateFightChallenge'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FightChallenge'
+          description: ''
+  /api/v1/register-player:
+    post:
+      operationId: register_player_create
+      description: |-
+        Creates a new player and project if necessary. If player already exists, will update it with the provided data.
+        (only names of project or user, ids won't change)
+
+        Request data example:
+        ```
+        {
+            "player_name": "test",
+            "account_id": "5b10ac8d82e05b22cc7d4ef5",
+            "project_id": "75fe4dcc22b50e28d8ca01b5",
+            "project_name": "test project"
+        }
+        ```
+
+        **player_name** and **project_name** are called displayName in Jira and aren't required
+      tags:
+      - register-player
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePlayerProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreatePlayerProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreatePlayerProfile'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlayerProfile'
+          description: ''
+  /api/v1/taskogotchi:
+    get:
+      operationId: taskogotchi_retrieve
+      description: Get taskogotchi by account_id and project_id
+      parameters:
+      - in: query
+        name: account_id
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: project_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - taskogotchi
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Taskogotchi'
+          description: ''
+    post:
+      operationId: taskogotchi_create
+      description: "Create taskogotchi by account_id and project_id. \n\nIf taskogotchi\
+        \ already exists, will return 409 error. (if not, call @let45fc)\n\nRequires\
+        \ the following data provided to identify the taskogotchi:\n\n```\n{\n\n\t\
+        \"account_id\": \"123456789\",\n\n\t\"project_id\": \"123456789\"\n\n}\n```"
+      tags:
+      - taskogotchi
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Taskogotchi'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Taskogotchi'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Taskogotchi'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Taskogotchi'
+          description: ''
+    put:
+      operationId: taskogotchi_update
+      description: "Update taskogotchi by account_id and project_id. \n\nIf taskogotchi\
+        \ does not exist, will return 404 error. (if not, call @let45fc)\n\nRequires\
+        \ the following data provided to identify the taskogotchi:\n\n```\n{\n\n\t\
+        \"account_id\": \"123456789\",\n\n\t\"project_id\": \"123456789\"\n\n}\n```"
+      tags:
+      - taskogotchi
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Taskogotchi'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Taskogotchi'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Taskogotchi'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Taskogotchi'
+          description: ''
+components:
+  schemas:
+    CreateFightChallenge:
+      type: object
+      properties:
+        project_id:
+          type: string
+        account_id:
+          type: string
+        opponent_id:
+          type: string
+      required:
+      - account_id
+      - opponent_id
+      - project_id
+    CreatePlayerProfile:
+      type: object
+      properties:
+        player_name:
+          type: string
+          maxLength: 255
+        account_id:
+          type: string
+          maxLength: 255
+        project_id:
+          type: string
+          maxLength: 255
+        project_name:
+          type: string
+          maxLength: 255
+      required:
+      - account_id
+      - player_name
+      - project_id
+      - project_name
+    FightChallenge:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        initiator:
+          allOf:
+          - $ref: '#/components/schemas/PlayerProfile'
+          readOnly: true
+        opponent:
+          allOf:
+          - $ref: '#/components/schemas/PlayerProfile'
+          readOnly: true
+        status:
+          type: string
+          readOnly: true
+        status_description:
+          type: string
+          readOnly: true
+        winner:
+          $ref: '#/components/schemas/PlayerProfile'
+        draw:
+          type: boolean
+        account_id:
+          type: string
+          writeOnly: true
+        project_id:
+          type: string
+          writeOnly: true
+        opponent_id:
+          type: string
+          writeOnly: true
+        action:
+          type: string
+          writeOnly: true
+        winner_account_id:
+          type: string
+          writeOnly: true
+      required:
+      - account_id
+      - id
+      - initiator
+      - opponent
+      - project_id
+      - status
+      - status_description
+    Opponent:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        profile:
+          $ref: '#/components/schemas/PlayerProfile'
+        in_fight:
+          type: boolean
+          readOnly: true
+        health:
+          type: integer
+        strength:
+          type: integer
+      required:
+      - id
+      - in_fight
+      - profile
+    Player:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          nullable: true
+          maxLength: 200
+        account_id:
+          type: string
+          title: AccountId from Jira
+          maxLength: 128
+      required:
+      - account_id
+      - id
+    PlayerProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        player:
+          $ref: '#/components/schemas/Player'
+        project:
+          $ref: '#/components/schemas/Project'
+      required:
+      - id
+      - player
+      - project
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          nullable: true
+          maxLength: 200
+        project_id:
+          type: string
+          maxLength: 200
+      required:
+      - id
+      - project_id
+    Taskogotchi:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        profile:
+          allOf:
+          - $ref: '#/components/schemas/PlayerProfile'
+          readOnly: true
+        image:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          title: Image components stored as JSON
+        last_updated:
+          type: string
+          format: date-time
+          readOnly: true
+        health:
+          type: integer
+        strength:
+          type: integer
+        account_id:
+          type: string
+          writeOnly: true
+        project_id:
+          type: string
+          writeOnly: true
+      required:
+      - account_id
+      - id
+      - last_updated
+      - profile
+      - project_id
+    UpdateFightChallenge:
+      type: object
+      properties:
+        project_id:
+          type: string
+        account_id:
+          type: string
+        action:
+          type: string
+        winner_account_id:
+          type: string
+      required:
+      - account_id
+      - action
+      - project_id
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
