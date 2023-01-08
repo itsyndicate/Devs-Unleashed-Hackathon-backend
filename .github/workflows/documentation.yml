@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Python ${{ matrix.python-version }}
-          uses: actions/setup-python@v2
-          with:
-            python-version: 3.11.1
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11.1
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build schema.yml
@@ -27,7 +27,7 @@ jobs:
     needs: generate-openapi-spec
     runs-on: ubuntu-latest
     steps:
-      - name: Download openapi.json
+      - name: Download schema.yml
         uses: actions/download-artifact@v3
         with:
           name: spec-file
