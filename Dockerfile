@@ -1,4 +1,4 @@
-ARG IMAGE_VERSION=python:3.10-alpine
+ARG IMAGE_VERSION=python:3.11.1-alpine
 ARG PLATFORM=linux/amd64
 
 ###########

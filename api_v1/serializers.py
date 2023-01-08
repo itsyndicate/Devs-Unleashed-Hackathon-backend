@@ -17,6 +17,18 @@ class PlayerSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'account_id')
 
 
+#     "player_name": "test",
+#     "account_id": "5b10ac8d82e05b22cc7d4ef5",
+#     "project_id": "75fe4dcc22b50e28d8ca01b5",
+#     "project_name": "test project"
+# }
+class CreatePlayerProfileSerializer(serializers.Serializer):
+    player_name = serializers.CharField(max_length=255)
+    account_id = serializers.CharField(max_length=255)
+    project_id = serializers.CharField(max_length=255)
+    project_name = serializers.CharField(max_length=255)
+
+
 class PlayerProfileSerializer(serializers.ModelSerializer):
     player = PlayerSerializer()
     project = ProjectSerializer()
@@ -30,7 +42,7 @@ class OpponentSerializer(serializers.ModelSerializer):
     profile = PlayerProfileSerializer()
     in_fight = serializers.SerializerMethodField('is_in_fight', read_only=True)
 
-    def is_in_fight(self, obj: Taskogotchi):
+    def is_in_fight(self, obj: Taskogotchi) -> bool:
         return FightChallenge.objects.filter(Q(opponent=obj.profile) | Q(initiator=obj.profile)) \
             .exclude(status__in=[FightStatus.COMPLETED, FightStatus.CANCELED]).exists()
 
@@ -39,11 +51,25 @@ class OpponentSerializer(serializers.ModelSerializer):
         fields = ('id', 'profile', 'in_fight', 'health', 'strength')
 
 
+class CreateFightChallengeSerializer(serializers.Serializer):
+    project_id = serializers.CharField(required=True)
+    account_id = serializers.CharField(required=True)
+    opponent_id = serializers.CharField(required=True)
+
+
+class UpdateFightChallengeSerializer(serializers.Serializer):
+    project_id = serializers.CharField(required=True)
+    account_id = serializers.CharField(required=True)
+    action = serializers.CharField(required=True)
+    winner_account_id = serializers.CharField(required=False)
+
+
 class FightChallengeSerializer(serializers.ModelSerializer):
     initiator = PlayerProfileSerializer(read_only=True)
     opponent = PlayerProfileSerializer(read_only=True)
     winner = PlayerProfileSerializer(required=False)
-    status = serializers.CharField(source='get_status_display', read_only=True)
+    status_description = serializers.CharField(source='get_status_display', read_only=True)
+    status = serializers.CharField(read_only=True)
     account_id = serializers.CharField(write_only=True)
     project_id = serializers.CharField(write_only=True)
     opponent_id = serializers.CharField(write_only=True, required=False)
@@ -85,7 +111,7 @@ class FightChallengeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FightChallenge
-        fields = ('id', 'initiator', 'opponent', 'status', 'winner', 'draw', 'account_id', 'project_id', 'opponent_id',
+        fields = ('id', 'initiator', 'opponent', 'status', 'status_description', 'winner', 'draw', 'account_id', 'project_id', 'opponent_id',
                   'action', 'winner_account_id')
 
 

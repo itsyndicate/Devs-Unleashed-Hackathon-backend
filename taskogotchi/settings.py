@@ -32,7 +32,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'core'
+
+    'drf_spectacular',
+    'core',
+    'api_v1',
 ]
 
 MIDDLEWARE = [
@@ -117,3 +120,16 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Taskogotchi backend API',
+    'DESCRIPTION': 'Jira Taskogotchi project. No authentication required.',
+    'VERSION': '0.0.1',
+    'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'],
+}

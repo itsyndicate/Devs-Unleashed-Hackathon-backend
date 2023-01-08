@@ -1,0 +1,43 @@
+name: Deploy Documentation to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-openapi-spec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python ${{ matrix.python-version }}
+          uses: actions/setup-python@v2
+          with:
+            python-version: 3.11.1
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Build schema.yml
+        run: python manage.py spectacular --color --file schema.yml
+      - name: Upload schema.yml
+        uses: actions/upload-artifact@v3
+        with:
+          name: spec-file
+          path: schema.yml
+  deploy:
+    needs: generate-openapi-spec
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download openapi.json
+        uses: actions/download-artifact@v3
+        with:
+          name: spec-file
+      - name: Generate Swagger UI
+        uses: Legion2/swagger-ui-action@v1
+        with:
+          output: swagger-ui
+          spec-file: schema.yml
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: swagger-ui
