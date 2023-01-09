@@ -1,0 +1,11 @@
+---
+
+ - name: Update repository and restart Docker Compose
+   hosts: backend_servers
+
+
+   roles:
+    - { role: compose_restart }
+
+ 
+

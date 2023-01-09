@@ -1,0 +1,24 @@
+---
+# tasks file for docker-compose_restart
+
+- name: Pull existing repository
+  shell:
+   cd ~/Devs-Unleashed-Hackathon-backend && git pull -p
+  register: pull_results
+
+
+- name: Restart Docker Compose
+  shell:
+   cd ~/Devs-Unleashed-Hackathon-backend && docker-compose restart
+  register: docker_compose_results
+
+
+- name: Show pull output
+  debug:
+   var: pull_results
+
+
+- name: Show Docker Compose restart output
+  debug:
+   var: docker_compose_results
+
