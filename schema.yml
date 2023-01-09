@@ -303,9 +303,21 @@ components:
           allOf:
           - $ref: '#/components/schemas/PlayerProfile'
           readOnly: true
+        initiator_health:
+          type: integer
+          readOnly: true
+        initiator_strength:
+          type: integer
+          readOnly: true
         opponent:
           allOf:
           - $ref: '#/components/schemas/PlayerProfile'
+          readOnly: true
+        opponent_health:
+          type: integer
+          readOnly: true
+        opponent_strength:
+          type: integer
           readOnly: true
         status:
           type: string
@@ -336,7 +348,11 @@ components:
       - account_id
       - id
       - initiator
+      - initiator_health
+      - initiator_strength
       - opponent
+      - opponent_health
+      - opponent_strength
       - project_id
       - status
       - status_description
