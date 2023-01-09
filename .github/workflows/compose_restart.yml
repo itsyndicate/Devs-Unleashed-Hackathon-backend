@@ -2,7 +2,7 @@ name: Restart Docker Compose
 on:
   push:
     branches: 
-      - compose-restart
+      - main
 
 jobs:
   docker_compose_restart:
@@ -11,7 +11,7 @@ jobs:
     
       - uses: actions/checkout@v3
         with:
-          ref: compose-restart
+          ref: main
           
       - name: Setup Python
         uses: actions/setup-python@v2
