@@ -9,7 +9,7 @@
 
 - name: Restart Docker Compose
   shell:
-   cd ~/Devs-Unleashed-Hackathon-backend && docker-compose restart
+   cd ~/Devs-Unleashed-Hackathon-backend  && docker-compose up -d --build
   register: docker_compose_results
 
 
