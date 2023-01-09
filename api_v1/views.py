@@ -1,5 +1,6 @@
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from django.db.models import Q
+from django.http import Http404
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView, UpdateAPIView, RetrieveAPIView, ListAPIView, GenericAPIView
 from rest_framework.permissions import AllowAny
@@ -72,8 +73,11 @@ class TaskogotchiView(CreateAPIView, RetrieveAPIView, UpdateAPIView, GenericAPIV
     def get_object(self):
         project_id = self.request.data.get('project_id') or self.request.GET.get('project_id')
         account_id = self.request.data.get('account_id') or self.request.GET.get('account_id')
-        return self.queryset.get(profile__player__account_id=account_id,
+        try:
+            return self.queryset.get(profile__player__account_id=account_id,
                                  profile__project__project_id=project_id)
+        except Taskogotchi.DoesNotExist:
+            raise Http404("Taskogotchi does not exist")
 
 
 @extend_schema(

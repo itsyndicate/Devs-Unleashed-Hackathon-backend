@@ -17,11 +17,6 @@ class PlayerSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'account_id')
 
 
-#     "player_name": "test",
-#     "account_id": "5b10ac8d82e05b22cc7d4ef5",
-#     "project_id": "75fe4dcc22b50e28d8ca01b5",
-#     "project_name": "test project"
-# }
 class CreatePlayerProfileSerializer(serializers.Serializer):
     player_name = serializers.CharField(max_length=255)
     account_id = serializers.CharField(max_length=255)
@@ -66,7 +61,11 @@ class UpdateFightChallengeSerializer(serializers.Serializer):
 
 class FightChallengeSerializer(serializers.ModelSerializer):
     initiator = PlayerProfileSerializer(read_only=True)
+    initiator_health = serializers.IntegerField(read_only=True)
+    initiator_strength = serializers.IntegerField(read_only=True)
     opponent = PlayerProfileSerializer(read_only=True)
+    opponent_health = serializers.IntegerField(read_only=True)
+    opponent_strength = serializers.IntegerField(read_only=True)
     winner = PlayerProfileSerializer(required=False)
     status_description = serializers.CharField(source='get_status_display', read_only=True)
     status = serializers.CharField(read_only=True)
@@ -75,6 +74,11 @@ class FightChallengeSerializer(serializers.ModelSerializer):
     opponent_id = serializers.CharField(write_only=True, required=False)
     winner_account_id = serializers.CharField(write_only=True, required=False)
     action = serializers.CharField(write_only=True, required=False)
+
+    def filter_validated_data(self, instance, validated_data):
+        """Filters validated_data to contain only fields that are included in model"""
+        field_names = [field.name for field in instance._meta.get_fields()]
+        return {k: v for k, v in validated_data.items() if k in field_names}
 
     def create(self, validated_data):
         account_id = validated_data.pop('account_id')
@@ -87,6 +91,11 @@ class FightChallengeSerializer(serializers.ModelSerializer):
         validated_data['initiator'] = initiator_profile
         validated_data['opponent'] = opponent_profile
         validated_data['status'] = FightStatus.WAITING_ACCEPT
+        validated_data['initiator_health'] = initiator_profile.taskogotchi.health
+        validated_data['initiator_strength'] = initiator_profile.taskogotchi.strength
+        validated_data['opponent_health'] = opponent_profile.taskogotchi.health
+        validated_data['opponent_strength'] = opponent_profile.taskogotchi.strength
+        validated_data = self.filter_validated_data(FightChallenge(), validated_data)
         return super().create(validated_data)
 
     def update(self, instance: FightChallenge, validated_data):
@@ -107,12 +116,14 @@ class FightChallengeSerializer(serializers.ModelSerializer):
             instance = FightStatusStateMachine.process_action(action, instance, save=False)
         except ValueError as e:
             raise serializers.ValidationError(str(e))
+        validated_data = self.filter_validated_data(FightChallenge(), validated_data)
         return super().update(instance, validated_data)
 
     class Meta:
         model = FightChallenge
-        fields = ('id', 'initiator', 'opponent', 'status', 'status_description', 'winner', 'draw', 'account_id', 'project_id', 'opponent_id',
-                  'action', 'winner_account_id')
+        fields = ('id', 'initiator', 'initiator_health', 'initiator_strength', 'opponent', 'opponent_health',
+                  'opponent_strength', 'status', 'status_description', 'winner', 'draw', 'account_id', 'project_id',
+                  'opponent_id', 'action', 'winner_account_id')
 
 
 class TaskogotchiSerializer(serializers.ModelSerializer):

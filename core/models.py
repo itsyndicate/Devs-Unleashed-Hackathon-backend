@@ -42,7 +42,11 @@ class FightStatus(models.TextChoices):
 
 class FightChallenge(models.Model):
     initiator = models.ForeignKey('PlayerProfile', on_delete=models.CASCADE, related_name='initiated_fights')
+    initiator_health = models.IntegerField(default=100)
+    initiator_strength = models.IntegerField(default=100)
     opponent = models.ForeignKey('PlayerProfile', on_delete=models.CASCADE, related_name='received_fights')
+    opponent_health = models.IntegerField(default=100)
+    opponent_strength = models.IntegerField(default=100)
     status = models.CharField(max_length=2, choices=FightStatus.choices, default=FightStatus.WAITING_ACCEPT)
     winner = models.ForeignKey('PlayerProfile', on_delete=models.CASCADE, related_name='won_fights', null=True,
                                blank=True)

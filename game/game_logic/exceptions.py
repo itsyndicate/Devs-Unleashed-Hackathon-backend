@@ -1,0 +1,2 @@
+class FightEndedException(Exception):
+    pass

@@ -30,6 +30,9 @@ services:
     env_file:
       - .env-db
 
+  redis:
+    image: redis:7-alpine
+
   nginx:
     build:
       context: ./nginx
