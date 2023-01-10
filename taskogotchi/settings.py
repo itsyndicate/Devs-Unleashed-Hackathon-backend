@@ -19,6 +19,7 @@ DEBUG = True if MODE == 'DEV' else False
 
 
 ALLOWED_HOSTS = ['*']
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 # Application definition
@@ -38,9 +39,11 @@ INSTALLED_APPS = [
     'core',
     'api_v1',
     'game',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
