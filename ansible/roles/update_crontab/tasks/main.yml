@@ -1,0 +1,22 @@
+---
+# tasks file for update_crontab
+
+
+- name: Copy source folder to the destination place
+  copy:
+   src: "my_crontab"
+   dest: "{{ destination }}"
+   mode: 0755
+  register: copy_results
+
+
+- name: Update crontab
+  shell:
+   cd "{{ destination }}" && crontab my_crontab && rm my_crontab
+  register: crontab_results
+
+
+- name: Show results of crontab update
+  debug:
+   var: crontab_results
+

@@ -1,0 +1,2 @@
+0 8 * * * docker exec devs-unleashed-hackathon-backend_web_1 sh -c "python manage.py setstatsfull"
+* 12-23,0-7 * * * docker exec devs-unleashed-hackathon-backend_web_1 sh -c "python manage.py decreasestats 1"
