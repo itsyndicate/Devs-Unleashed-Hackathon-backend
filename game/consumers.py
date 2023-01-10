@@ -1,17 +1,15 @@
 import asyncio
 import json
 
-from django.db.models import Q
-from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.exceptions import DenyConnection
 from channels.db import database_sync_to_async
-from core.models import FightChallenge, FightStatus
+from channels.exceptions import DenyConnection
+from channels.generic.websocket import AsyncWebsocketConsumer
+from django.db.models import Q
 
-from game.game_logic.fight_creator import create_fight_from_fight_challenge
-from game.game_logic.fight import Fight, FightTimer, FightPlayer
-# from game.game_logic.actions import FightAction
+from core.models import FightChallenge, FightStatus
 from game.game_logic.actions_mapping import map_action
-from game.game_logic.constants import FIGHT_COUNTDOWN_DURATION
+from game.game_logic.fight import Fight
+from game.game_logic.fight_creator import create_fight_from_fight_challenge
 
 
 async def get_fight_by_account_id(account_id: str) -> FightChallenge:

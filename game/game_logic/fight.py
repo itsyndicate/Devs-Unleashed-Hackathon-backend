@@ -3,7 +3,7 @@ from time import time
 from game.game_logic.exceptions import FightEndedException
 from game.game_logic.json_serializable import JsonSerializable
 
-HEALTH_COEFFICIENT = 0.1
+STRENGTH_COEFFICIENT = 0.1
 
 
 class FightTimer(JsonSerializable):
@@ -57,7 +57,7 @@ class FightPlayer(JsonSerializable):
         self.strength = strength
 
     def attack(self, opponent: 'FightPlayer') -> None:
-        opponent.health -= self.strength * HEALTH_COEFFICIENT
+        opponent.health -= self.strength * STRENGTH_COEFFICIENT
         if opponent.health < 0:
             opponent.health = 0
 
