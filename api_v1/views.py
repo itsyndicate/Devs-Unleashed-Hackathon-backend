@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from django.db.models import Q
 from django.http import Http404
@@ -57,7 +58,9 @@ class TaskogotchiView(CreateAPIView, RetrieveAPIView, UpdateAPIView, GenericAPIV
         validate_request(request, 'project_id', 'account_id')
         account_id = request.data.get('account_id')
         project_id = request.data.get('project_id')
-        player_profile = PlayerProfile.objects.get(player__account_id=account_id, project__project_id=project_id)
+        player_profile = get_object_or_404(PlayerProfile,
+                                           player__account_id=account_id, project__project_id=project_id
+                                           )
         if Taskogotchi.objects.filter(profile=player_profile).exists():
             return Response({'error': 'Taskogotchi already exists'}, status=409)
         return super().create(request, *args, **kwargs)
@@ -75,7 +78,7 @@ class TaskogotchiView(CreateAPIView, RetrieveAPIView, UpdateAPIView, GenericAPIV
         account_id = self.request.data.get('account_id') or self.request.GET.get('account_id')
         try:
             return self.queryset.get(profile__player__account_id=account_id,
-                                 profile__project__project_id=project_id)
+                                     profile__project__project_id=project_id)
         except Taskogotchi.DoesNotExist:
             raise Http404("Taskogotchi does not exist")
 
@@ -160,20 +163,20 @@ class OpponentsListView(ListAPIView, GenericAPIView):
     methods=['POST'],
     request=CreateFightChallengeSerializer(),
     description="Create a new fight challenge\n\n"
-    "**Be careful! You can't create new fight if you're already in another fight! "
+                "**Be careful! You can't create new fight if you're already in another fight! "
                 "In case you try, you'll get an 409 error.**"
 )
 @extend_schema(
     methods=['PUT'],
     request=UpdateFightChallengeSerializer(),
     description="Update fight challenge\n\n"
-    "Available actions: *accept*, *start*, *complete*, *cancel*.\n\n"
-    "If fight doesn't exist, you'll get 404 error. (if not, please notify @let45fc)\n\n"
-    "Don't forget to send **account_id** in request data! It is necessary to identify the fight you are in.\n\n"
-    "**Important**: when completing a fight, you need to send **\"winner_account_id\"** if there's a winner in fight. "
+                "Available actions: *accept*, *start*, *complete*, *cancel*.\n\n"
+                "If fight doesn't exist, you'll get 404 error. (if not, please notify @let45fc)\n\n"
+                "Don't forget to send **account_id** in request data! It is necessary to identify the fight you are in.\n\n"
+                "**Important**: when completing a fight, you need to send **\"winner_account_id\"** if there's a winner in fight. "
                 "If there's no winner, you need to send **\"winner_account_id\": null** "
                 "or not to send this field at all. "
-    "If winner_account_id is not provided, the fight will be considered a draw."
+                "If winner_account_id is not provided, the fight will be considered a draw."
 )
 class FightChallengeView(CreateAPIView, RetrieveAPIView, UpdateAPIView, GenericAPIView):
     permission_classes = (AllowAny,)
