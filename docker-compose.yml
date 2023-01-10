@@ -34,13 +34,14 @@ services:
     image: redis:7-alpine
 
   nginx:
-    build:
-      context: ./nginx
+    image: nginx:1.21-alpine
     volumes:
       - ./static:/app/web/static
       - ./media:/app/web/media
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
     ports:
       - 80:80
+      - 443:443
     depends_on:
       - web
       - db
