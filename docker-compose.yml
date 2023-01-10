@@ -39,6 +39,7 @@ services:
     volumes:
       - ./static:/app/web/static
       - ./media:/app/web/media
+      - /etc/nginx/conf.d/nginx.conf:./nginx/nginx.conf
     ports:
       - 80:80
       - 443:443
