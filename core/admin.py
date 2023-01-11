@@ -25,4 +25,4 @@ class PlayerProfileAdmin(admin.ModelAdmin):
 @admin.register(FightChallenge)
 class FightChallengeAdmin(admin.ModelAdmin):
     list_display = ('id', 'initiator', 'opponent', 'status', 'winner', 'draw')
-    list_editable = ('status',)
+    list_editable = ('status', 'draw')
