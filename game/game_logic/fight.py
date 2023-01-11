@@ -16,7 +16,7 @@ class FightTimer(JsonSerializable):
             start_time = time()
         self.start_time = start_time
         self.duration = duration
-        self.countdown_duration = 3
+        self.countdown_duration = countdown_duration
 
     @property
     def end_time(self) -> float:
