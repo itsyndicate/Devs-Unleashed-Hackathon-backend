@@ -115,7 +115,7 @@ class RegisterPlayerView(APIView):
         project_id = request.data.get('project_id')
         project_name = request.data.get('project_name')
 
-        if account_id is None or project_id is None:
+        if not account_id or not project_id:
             raise ValidationError(detail='account_id and project_id are required')
 
         project, _ = Project.objects.update_or_create(project_id=project_id, defaults={'name': project_name})

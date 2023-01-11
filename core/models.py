@@ -7,7 +7,7 @@ class Project(models.Model):
     project_id = models.CharField(max_length=200, unique=True)
 
     def __str__(self):
-        return self.name
+        return self.project_id
 
 
 class Player(models.Model):
@@ -15,7 +15,7 @@ class Player(models.Model):
     account_id = models.CharField('accountId from Jira', max_length=128, unique=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}, ({self.account_id})"
 
 
 # profile of user in specific project
