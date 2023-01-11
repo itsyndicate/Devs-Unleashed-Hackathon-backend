@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: 3.11.1
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r requirements.txt && export CSRF_TRUSTED_ORIGINS="https://exampledomain.com"
       - name: Build schema.yml
         run: python manage.py spectacular --color --file schema.yml
       - name: Upload schema.yml
