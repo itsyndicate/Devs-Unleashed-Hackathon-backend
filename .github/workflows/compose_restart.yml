@@ -22,11 +22,15 @@ jobs:
         env:
           ANSIBLE_SSH_PRIVATE_KEY : ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
           ANSIBLE_INVENTORY: ${{ secrets.ANSIBLE_INVENTORY }}
+          ENV : ${{ secrets.ENV }}
+          ENV_DB: ${{ secrets.ENV_DB }}
           
         run: |
           echo "$ANSIBLE_SSH_PRIVATE_KEY" > ansible/frank-hackaton.pem
           echo "$ANSIBLE_INVENTORY" > ansible/hosts.txt
           chmod 600 ansible/frank-hackaton.pem
+          echo "$ENV" > ansible/roles/compose_restart/files/.env
+          echo "$ENV_DB" > ansible/roles/compose_restart/files/.env-db
           
       - name: Install ansible
         run: |

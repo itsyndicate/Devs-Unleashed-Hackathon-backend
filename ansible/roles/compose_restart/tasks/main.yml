@@ -7,6 +7,22 @@
   register: pull_results
 
 
+- name: Remove old .env files
+  shell:
+   cd ~/Devs-Unleashed-Hackathon-backend && rm .env && rm .env-db
+
+
+- name: Set new .env files
+  copy:
+   src: "{{ item }}"
+   dest: "{{ destination }}"
+   mode: 0755
+  loop:
+   - ".env"
+   - ".env-db" 
+  register: copy_results
+
+
 - name: Restart Docker Compose
   shell:
    cd ~/Devs-Unleashed-Hackathon-backend  && docker-compose up -d --build
@@ -16,6 +32,11 @@
 - name: Show pull output
   debug:
    var: pull_results
+
+
+- name: Show copy results
+  debug:
+   var: copy_results
 
 
 - name: Show Docker Compose restart output
