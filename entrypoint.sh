@@ -17,7 +17,7 @@ python manage.py migrate --noinput
 if [ "$MODE" = "PRODUCTION" ] || [ "$MODE" = "STAGING" ]
 then
   python manage.py collectstatic --noinput
-  gunicorn taskogotchi.wsgi:application --worker-class=gevent --worker-connections=1000 --workers=5 --bind 0.0.0.0:8000
+  daphne -b 0.0.0.0 -p 8000 taskogotchi.asgi:application
 fi
 
 exec "$@"

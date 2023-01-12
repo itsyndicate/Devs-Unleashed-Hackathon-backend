@@ -13,6 +13,7 @@ class Project(models.Model):
 class Player(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
     account_id = models.CharField('accountId from Jira', max_length=128, unique=True)
+    email = models.EmailField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.name}, ({self.account_id})"

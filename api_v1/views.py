@@ -90,13 +90,14 @@ class TaskogotchiView(CreateAPIView, RetrieveAPIView, UpdateAPIView, GenericAPIV
 class RegisterPlayerView(APIView):
     """
     Creates a new player and project if necessary. If player already exists, will update it with the provided data.
-    (only names of project or user, ids won't change)
+    (only player_name, email and project_name, ids won't change)
 
     Request data example:
     ```
     {
-        "player_name": "test",
         "account_id": "5b10ac8d82e05b22cc7d4ef5",
+        "player_name": "test",
+        "email": "example@email.com",
         "project_id": "75fe4dcc22b50e28d8ca01b5",
         "project_name": "test project"
     }
@@ -114,12 +115,16 @@ class RegisterPlayerView(APIView):
         account_id = request.data.get('account_id')
         project_id = request.data.get('project_id')
         project_name = request.data.get('project_name')
+        email = request.data.get('email')
 
         if not account_id or not project_id:
             raise ValidationError(detail='account_id and project_id are required')
 
         project, _ = Project.objects.update_or_create(project_id=project_id, defaults={'name': project_name})
-        player, _ = Player.objects.update_or_create(account_id=account_id, defaults={'name': player_name})
+        player, _ = Player.objects.update_or_create(account_id=account_id, defaults={
+            'name': player_name,
+            'email': email
+        })
         user_profile, _ = PlayerProfile.objects.get_or_create(player=player, project=project)
         return Response(PlayerProfileSerializer(user_profile).data)
 
@@ -146,7 +151,7 @@ class OpponentsListView(ListAPIView, GenericAPIView):
         project_id = self.request.data.get('project_id') or self.request.GET.get('project_id')
         account_id = self.request.data.get('account_id') or self.request.GET.get('account_id')
         return self.queryset.filter(profile__project__project_id=project_id) \
-            .exclude(profile__player__account_id=account_id)
+            .exclude(profile__player__account_id=account_id).select_related('profile', 'profile__player')
 
 
 @extend_schema(
@@ -212,4 +217,5 @@ class FightChallengeView(CreateAPIView, RetrieveAPIView, UpdateAPIView, GenericA
         account_id = self.request.data.get('account_id') or self.request.GET.get('account_id')
         return self.queryset.filter(Q(opponent__player__account_id=account_id)
                                     | Q(initiator__player__account_id=account_id)) \
-            .exclude(status__in=[FightStatus.COMPLETED, FightStatus.CANCELED])
+            .exclude(status__in=[FightStatus.COMPLETED, FightStatus.CANCELED])\
+            .select_related('initiator', 'opponent', 'initiator__player', 'opponent__player')

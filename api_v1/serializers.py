@@ -14,7 +14,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ('id', 'name', 'account_id')
+        fields = ('id', 'name', 'account_id', 'email')
 
 
 class CreatePlayerProfileSerializer(serializers.Serializer):
@@ -30,7 +30,7 @@ class PlayerProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PlayerProfile
-        fields = ('id', 'player', 'project')
+        fields = ('id', 'player', 'project',)
 
 
 class OpponentSerializer(serializers.ModelSerializer):
