@@ -3,6 +3,8 @@ async-timeout==4.0.2
 attrs==22.2.0
 autobahn==22.12.1
 Automat==22.10.0
+boto3==1.26.48
+botocore==1.29.48
 cffi==1.15.1
 channels==4.0.0
 channels-redis==4.0.0
@@ -13,6 +15,7 @@ daphne==4.0.0
 Django==4.1.4
 django-cors-headers==3.13.0
 django-filter==22.1
+django-ses==3.3.0
 djangorestframework==3.14.0
 drf-spectacular==0.25.1
 greenlet==2.0.1
@@ -23,6 +26,7 @@ idna==3.4
 importlib-metadata==5.2.0
 incremental==22.10.0
 inflection==0.5.1
+jmespath==1.0.1
 jsonschema==4.17.3
 Markdown==3.4.1
 msgpack==1.0.4
@@ -33,10 +37,12 @@ pyasn1-modules==0.2.8
 pycparser==2.21
 pyOpenSSL==23.0.0
 pyrsistent==0.19.3
+python-dateutil==2.8.2
 python-dotenv==0.21.0
 pytz==2022.7
 PyYAML==6.0
 redis==4.4.1
+s3transfer==0.6.0
 service-identity==21.1.0
 six==1.16.0
 sqlparse==0.4.3
@@ -44,6 +50,7 @@ Twisted==22.10.0
 txaio==22.2.1
 typing_extensions==4.4.0
 uritemplate==4.1.1
+urllib3==1.26.14
 uvicorn==0.20.0
 zipp==3.11.0
 zope.interface==5.5.2

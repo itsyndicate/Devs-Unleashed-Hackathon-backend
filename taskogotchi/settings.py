@@ -22,6 +22,15 @@ ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
 CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "https://*").split(",")
 
+if MODE == 'DEV':
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+elif MODE in ['PRODUCTION', 'STAGING']:
+    EMAIL_BACKEND = 'django_ses.SESBackend'
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
+    AWS_SES_REGION_NAME = 'eu-central-1'
+    AWS_SES_REGION_ENDPOINT = 'email.eu-central-1.amazonaws.com'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -32,14 +41,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',
     'rest_framework.authtoken',
-
+    'django_ses',
+    'corsheaders',
     'drf_spectacular',
+
     'core',
     'api_v1',
     'game',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [

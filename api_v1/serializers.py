@@ -1,5 +1,7 @@
 from django.db.models import Q
 from rest_framework import serializers
+
+from core.business_services.notification_sender import send_fight_call_notification
 from core.models import Taskogotchi, Project, PlayerProfile, FightChallenge, Player, FightStatus
 from django.shortcuts import get_object_or_404
 from core.business_services.fight_status_state_machine import FightStatusStateMachine
@@ -96,7 +98,9 @@ class FightChallengeSerializer(serializers.ModelSerializer):
         validated_data['opponent_health'] = opponent_profile.taskogotchi.health
         validated_data['opponent_strength'] = opponent_profile.taskogotchi.strength
         validated_data = self.filter_validated_data(FightChallenge(), validated_data)
-        return super().create(validated_data)
+        result = super().create(validated_data)
+        send_fight_call_notification(result)
+        return result
 
     def update(self, instance: FightChallenge, validated_data):
         action = validated_data.pop('action', None)
