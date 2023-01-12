@@ -77,8 +77,8 @@ class TaskogotchiView(CreateAPIView, RetrieveAPIView, UpdateAPIView, GenericAPIV
         project_id = self.request.data.get('project_id') or self.request.GET.get('project_id')
         account_id = self.request.data.get('account_id') or self.request.GET.get('account_id')
         try:
-            return self.queryset.get(profile__player__account_id=account_id,
-                                     profile__project__project_id=project_id)
+            return self.get_queryset().get(profile__player__account_id=account_id,
+                                           profile__project__project_id=project_id)
         except Taskogotchi.DoesNotExist:
             raise Http404("Taskogotchi does not exist")
 
@@ -150,7 +150,7 @@ class OpponentsListView(ListAPIView, GenericAPIView):
     def get_queryset(self):
         project_id = self.request.data.get('project_id') or self.request.GET.get('project_id')
         account_id = self.request.data.get('account_id') or self.request.GET.get('account_id')
-        return self.queryset.filter(profile__project__project_id=project_id) \
+        return super().get_queryset().filter(profile__project__project_id=project_id) \
             .exclude(profile__player__account_id=account_id).select_related('profile', 'profile__player')
 
 
@@ -209,13 +209,17 @@ class FightChallengeView(CreateAPIView, RetrieveAPIView, UpdateAPIView, GenericA
         return super().update(request, *args, **kwargs)
 
     def get_object(self):
-        if self.queryset.count() > 1:
+        queryset = self.get_queryset()
+        if queryset.count() > 1:
             raise ValidationError(detail='Something went wrong. More than one pending fight challenge exists', code=500)
-        return self.queryset.first()
+        elif queryset.count() == 0:
+            raise Http404('No pending fight challenge exists')
+        return self.get_queryset().first()
 
     def get_queryset(self):
         account_id = self.request.data.get('account_id') or self.request.GET.get('account_id')
-        return self.queryset.filter(Q(opponent__player__account_id=account_id)
-                                    | Q(initiator__player__account_id=account_id)) \
-            .exclude(status__in=[FightStatus.COMPLETED, FightStatus.CANCELED])\
+        print(account_id)
+        return super().get_queryset().filter(Q(opponent__player__account_id=account_id)
+                                             | Q(initiator__player__account_id=account_id)) \
+            .exclude(status__in=[FightStatus.COMPLETED, FightStatus.CANCELED]) \
             .select_related('initiator', 'opponent', 'initiator__player', 'opponent__player')
