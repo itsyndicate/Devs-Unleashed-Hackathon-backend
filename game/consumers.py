@@ -144,6 +144,7 @@ class FightConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             "type": "server_info",
             "message": "game_started",
+            "fight": self.fight_object.to_json(),
         }))
         await self.countdown()
 
