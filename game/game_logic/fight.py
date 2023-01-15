@@ -38,7 +38,9 @@ class FightTimer(JsonSerializable):
             'start_time': self.start_time,
             'duration': self.duration,
             'countdown_duration': self.countdown_duration,
-            'end_time': self.end_time
+            'is_countdown': self.is_countdown,
+            'end_time': self.end_time,
+            'time_left': self.time_left,
         }
 
     @staticmethod
@@ -115,6 +117,7 @@ class Fight(JsonSerializable):
             'player1': self.player1.to_json(),
             'player2': self.player2.to_json(),
             'fight_timer': self.fight_timer.to_json(),
+            'winner': self.winner,
             'ended': self.is_ended
         }
 
