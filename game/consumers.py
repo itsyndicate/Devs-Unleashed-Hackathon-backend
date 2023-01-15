@@ -6,7 +6,7 @@ from channels.exceptions import DenyConnection
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.db.models import Q
 
-from core.models import FightChallenge, FightStatus
+from core.models import FightChallenge, FightStatus, PlayerProfile
 from game.game_logic.actions_mapping import map_action
 from game.game_logic.fight import Fight
 from game.game_logic.fight_creator import create_fight_from_fight_challenge
@@ -27,7 +27,7 @@ def finish_fight(fight: FightChallenge, winner_id: str):
     fight.refresh_from_db()
     fight.status = FightStatus.COMPLETED
     if winner_id:
-        fight.winner_id = winner_id
+        fight.winner = PlayerProfile.objects.get(player__account_id=winner_id)
     else:
         fight.draw = True
     fight.save()
