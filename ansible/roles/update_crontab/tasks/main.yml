@@ -6,7 +6,7 @@
   copy:
    src: "my_crontab"
    dest: "{{ destination }}"
-   mode: 0755
+   mode: 0664
   register: copy_results
 
 
