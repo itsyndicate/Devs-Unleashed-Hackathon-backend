@@ -164,11 +164,16 @@ class FightConsumer(AsyncWebsocketConsumer):
         account_id = event['account_id']
         if account_id == self.account_id:
             return
-        fight_object = self.fight_object
-        send_data = json.dumps({
-            "fight": fight_object.to_json(),
-            "data": event['text_data']
-        })
+        if self.fight_object:
+            send_data = json.dumps({
+                "fight": self.fight_object.to_json(),
+                "data": event['text_data']
+            })
+        else:
+            send_data = json.dumps({
+                "fight": None,
+                "data": event['text_data']
+            })
         await self.send(text_data=send_data)
 
     async def game_over(self, event):
