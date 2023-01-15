@@ -117,7 +117,7 @@ class Fight(JsonSerializable):
             'player1': self.player1.to_json(),
             'player2': self.player2.to_json(),
             'fight_timer': self.fight_timer.to_json(),
-            'winner': self.winner,
+            'winner': self.winner.to_json() if self.winner else None,
             'ended': self.is_ended
         }
 
