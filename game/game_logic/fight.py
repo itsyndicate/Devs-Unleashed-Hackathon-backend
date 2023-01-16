@@ -50,13 +50,15 @@ class FightTimer(JsonSerializable):
 
 class FightPlayer(JsonSerializable):
     account_id: str
+    name: str = None
     health: int
     strength: int
 
-    def __init__(self, account_id: str, health: int, strength: int):
+    def __init__(self, account_id: str, health: int, strength: int, name: str = None):
         self.account_id = account_id
         self.health = health
         self.strength = strength
+        self.name = name
 
     def attack(self, opponent: 'FightPlayer') -> None:
         opponent.health -= self.strength * STRENGTH_COEFFICIENT
@@ -76,6 +78,7 @@ class FightPlayer(JsonSerializable):
             'account_id': self.account_id,
             'health': self.health,
             'strength': self.strength,
+            'name': self.name,
         }
 
     @staticmethod
@@ -84,6 +87,7 @@ class FightPlayer(JsonSerializable):
             data['account_id'],
             data['health'],
             data['strength'],
+            data.get('name')
         )
 
 
